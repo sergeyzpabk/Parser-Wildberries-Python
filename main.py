@@ -1,64 +1,15 @@
 import time
 import requests
 import aiohttp
-from getserver import getUrlCard, getUrlImg
+from utils import getUrlCard, getUrlImg, headers, DEST, URL_SEARCH
 import asyncio
-
 query = "пальто из натуральной шерсти"
-#query = "пальто натуральной шерсти"
-
-cookie = "x_wbaas_token=1.1000.7b88182a45834cda9c19d83a11475855.MHwxNzYuMTUuMTY0LjI1fE1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xNDQuMC4wLjAgU2FmYXJpLzUzNy4zNnwxNzcxNTkxODg1fHJldXNhYmxlfDJ8ZXlKb1lYTm9Jam9pSW4wPXwwfDN8MTc3MDk4NzA4NXwx.MEUCIAfklxTyrKkvNX6hoUuTR76ETN+XljS1AVVOCxNrmQ0oAiEAit/4Nq2BDq58hjH4uGPjb1SQN5fWp/j4fErNB2n7eEY=; _wbauid=9255161901770382035; routeb=1770404947.732.60.384847|28979c6168ec4738f0fcb8539a6d5f12"
-
-#региональность
-dest = "123586213"
-
-URL_SEARCH = "https://www.wildberries.ru/__internal/u-search/exactmatch/ru/common/v18/search"
-
-headers = {
-    "accept": "*/*",
-    "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-    "deviceid": "site_ad042367acf04931ad4a5c4aefe6ccfe",
-    "priority": "u=1, i",
-    "sec-ch-ua": "\"Not(A:Brand\";v=\"8\", \"Chromium\";v=\"144\", \"Google Chrome\";v=\"144\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "x-queryid": "qid925516190177038203520260206124715",
-    "x-requested-with": "XMLHttpRequest",
-    "x-spa-version": "13.22.3",
-    "x-userid": "0",
-    "cookie": cookie
-}
-
-
-async def detCard_(
-    self,
-    sid:str,
-    proxy:str,
-    session: aiohttp.ClientSession,
-    semaphore: asyncio.Semaphore
-):
-    pass
 
 
 
-def get_params(query:str, page:int):
-    params = {
-        "appType": "1",
-        "curr": "rub",
-        "dest": dest,
-        "hide_dtype": "9",
-        "hide_vflags": "4294967296",
-        "lang": "ru",
-        "page": str(page),
-        "query": query,
-        "resultset": "catalog",
-        "sort": "popular",
-        "spp": "30",
-    }
-    return params
+
+
+
 
 
 def parse_card(detail : dict ):
@@ -194,7 +145,7 @@ def start_search():
             ###Получаем detail по 100 id(артикулам) карточек
 
             resDetail = requests.get(
-                url=f'https://www.wildberries.ru/__internal/u-card/cards/v4/detail?appType=1&curr=rub&dest={dest}&spp=30&hide_vflags=4294967296&hide_dtype=9&ab_testing=false&lang=ru&nm={response['products'][0]['id']}',
+                url=f'https://www.wildberries.ru/__internal/u-card/cards/v4/detail?appType=1&curr=rub&dest={DEST}&spp=30&hide_vflags=4294967296&hide_dtype=9&ab_testing=false&lang=ru&nm={response['products'][0]['id']}',
                 headers=headers,
             ).json()
             print('DETAIL')
