@@ -228,6 +228,3 @@ async def main(queue: asyncio.Queue, query:str):
 
 
 
-query = "пальто из натуральной шерсти"
-queue = asyncio.Queue()
-asyncio.run(main(queue=queue, query=query))
