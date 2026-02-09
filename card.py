@@ -7,29 +7,9 @@ from playwright.async_api import async_playwright
 from utils import URL_SEARCH, get_params, getHeaders, DEST, getUrlCard, getUrlImg
 import aiohttp
 from aiohttp_proxy import ProxyConnector, ProxyType
-from dataclasses import dataclass
 
-
-
-@dataclass
-class DataClass:
-    description: str = None
-    imgs: str = None
-    urlCard: str = None
-    article: str = None
-    name: str = None
-    price: str = None
-    supplierName: str = None
-    url_supplier: str = None
-    qty: str = None
-    sizes: str = None
-    rating: str = None
-    feedBack: str = None
-    opts: str = None
-    sizesName: str = None
-
-
-
+from save_from_xlsx import save
+from utils import DataClass
 
 
 async def getCard(
@@ -74,7 +54,6 @@ async def getCard(
                     async with session.get(url=url,
                                             headers=getHeaders(cookie=cookie)
                     ) as res:
-
                         if res.status == 404:
                             print(f'404: {url}')
                             #нет такой страницы
@@ -87,12 +66,20 @@ async def getCard(
 
                         info = DataClass()
                         info.description =  responseCard['description']
-                        info.imgs = getUrlImg(id = str(ids), count = int(responseCard['media']['photo_count']))
+                        info.imgs = str(getUrlImg(id = str(ids), count = int(responseCard['media']['photo_count'])))
                         info.urlCard = f'https://www.wildberries.ru/catalog/{ids}/detail.aspx'
                         info.article = ids
                         info.name = responseCard['imt_name']
-                        info.price = 'None'
+                        try:
+                            for pr in detail['sizes']:
+                                if 'price' in pr:
+                                    info.price = str(pr['price']['product'])[:-2]
+                        except:
+                            print(f'not price: {url}')
                         info.supplierName = detail['supplier']
+
+
+
                         info.url_supplier = f'https://www.wildberries.ru/seller/{detail['supplierId']}'
 
                         qty = 0
@@ -113,17 +100,15 @@ async def getCard(
                         info.sizesName = sizesName
                         info.rating = str(detail['reviewRating'])
                         info.feedBack = str(detail['feedbacks'])
-
                         opts = []
-                        for opt in responseCard['options']:
-                            opts.append(f'{opt['name']} : {opt['value']} ')
-
+                        if 'options' in responseCard:
+                            for opt in responseCard['options']:
+                                opts.append(f'{opt['name']} : {opt['value']} ')
                         info.opts = opts
                         allCards.append(info)
-
-
                     pass
                 except Exception as err:
+                    print(f'non data: {url}')
                     print(f'Ошибка')
 
             """
@@ -140,9 +125,11 @@ async def getCard(
 
 
 async def main(queue: asyncio.Queue, query:str):
+    startTime = time.time()
     job = True
     if len(listProxyCookie) < 0:
         print('Нет доступных прокси. Для работы загрузите прокси ')
+        exit()
     else:
         print(f'К работе готово {len(listProxyCookie)} проксей')
 
@@ -186,6 +173,7 @@ async def main(queue: asyncio.Queue, query:str):
 
                         if maxCount == 0:
                             maxCount = int(response['total'])
+                            print(f'TOTAL PARS{maxCount}')
                             print(f"Карточек по запросу «{query}»: {maxCount}")
                         nm = ''
                         nms = []
@@ -213,8 +201,8 @@ async def main(queue: asyncio.Queue, query:str):
                     ###!!!Внимание break
 
                     #if count>300:
-                    #    break
-                    break
+                     #   break
+                    #break
                 except Exception as err:
                     print('ошибка выполнения запроса')
                     if count == 0:
@@ -224,31 +212,22 @@ async def main(queue: asyncio.Queue, query:str):
             except Exception as err:
                 print(f'ошибка цикла {err}')
 
-
             count = count + 100
                 # Получаем максимальное кол-во карточек
-
-
-
     job = False
     for i in range(0, len(listProxyCookie)+1):
         await queue.put(None)
     print('job = False')
     results = await asyncio.gather(*tasks_list)
 
-    pass
-
     ###Save openXlsx
-
-
-
+    save(results)
     ###---Save openXlsx
 
-
+    print(f'Время сбора карточек из поиска: {(time.time() - startTime):.4f} секунд')
 
 
 
 query = "пальто из натуральной шерсти"
-
 queue = asyncio.Queue()
 asyncio.run(main(queue=queue, query=query))

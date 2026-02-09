@@ -1,6 +1,26 @@
 
 cookie = "x_wbaas_token=1.1000.7b88182a45834cda9c19d83a11475855.MHwxNzYuMTUuMTY0LjI1fE1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS8xNDQuMC4wLjAgU2FmYXJpLzUzNy4zNnwxNzcxNTkxODg1fHJldXNhYmxlfDJ8ZXlKb1lYTm9Jam9pSW4wPXwwfDN8MTc3MDk4NzA4NXwx.MEUCIAfklxTyrKkvNX6hoUuTR76ETN+XljS1AVVOCxNrmQ0oAiEAit/4Nq2BDq58hjH4uGPjb1SQN5fWp/j4fErNB2n7eEY=; _wbauid=9255161901770382035; routeb=1770404947.732.60.384847|28979c6168ec4738f0fcb8539a6d5f12"
 
+from dataclasses import dataclass
+@dataclass
+class DataClass:
+    description: str = None
+    imgs: str = None
+    urlCard: str = None
+    article: str = None
+    name: str = None
+    price: str = None
+    supplierName: str = None
+    url_supplier: str = None
+    qty: str = None
+    sizes: str = None
+    rating: str = None
+    feedBack: str = None
+    opts: str = None
+    sizesName: str = None
+    imgs: str = None
+
+
 def getHeaders(cookie:str):
     return {
     "accept": "*/*",
