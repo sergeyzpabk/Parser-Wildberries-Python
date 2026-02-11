@@ -99,7 +99,7 @@ def save(date:dict):
         # Цена
         #Страна РФ
         country = False
-        if (Decimal(4.5) <= Decimal(str(info.rating))) and (str(info.opts).upper().find("россия".upper())) and (Decimal(str(info.price)) < Decimal(10000)):
+        if (Decimal(4.5) <= Decimal((info.rating))) and (str(info.opts).upper().find("россия".upper())>0) and (Decimal((info.price)) < Decimal(10000)):
             #доп фильтр и файл)
             sheetfilter.append(new_data)
     workbook.save(file_path)
